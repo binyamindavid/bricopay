@@ -1,8 +1,11 @@
 package main
 
-import "bricopay/migrations"
+import (
+	"bricopay/api"
+)
 
 func main() {
 
-	migrations.Migrate()
+	// migrations.Migrate()
+	api.StartApi()
 }

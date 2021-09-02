@@ -2,19 +2,17 @@ module bricopay
 
 go 1.17
 
-require (
-	github.com/jinzhu/gorm v1.9.16
-	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5
-)
+require golang.org/x/crypto v0.0.0-20210817164053-32db794688a5
 
 require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.2 // indirect
 	gorm.io/driver/postgres v1.1.0
-	gorm.io/gorm v1.21.14 // indirect
 )
 
 require (
+	github.com/golang-jwt/jwt v3.2.2+incompatible
+	github.com/gorilla/mux v1.8.0
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.8.1 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
@@ -24,4 +22,5 @@ require (
 	github.com/jackc/pgtype v1.7.0 // indirect
 	github.com/jackc/pgx/v4 v4.11.0 // indirect
 	golang.org/x/text v0.3.3 // indirect
+	gorm.io/gorm v1.21.14
 )

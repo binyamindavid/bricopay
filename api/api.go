@@ -2,6 +2,7 @@ package api
 
 import (
 	"bricopay/helpers"
+	"bricopay/interfaces"
 	"bricopay/users"
 	"encoding/json"
 	"fmt"
@@ -23,56 +24,58 @@ type Register struct {
 	Email    string
 }
 
-type ErrResponse struct {
-	Message string
+func readBody(r *http.Request) []byte {
+	body, err := ioutil.ReadAll(r.Body)
+	helpers.HandleErr(err)
+
+	return body
+}
+
+func apiResponse(call map[string]interface{}, w http.ResponseWriter) {
+
+	if call["message"] == "all is ok" {
+		resp := call
+		json.NewEncoder(w).Encode(resp)
+	} else {
+		resp := interfaces.ErrResponse{Message: "Wrong username or password"}
+		json.NewEncoder(w).Encode(resp)
+	}
 }
 
 func login(w http.ResponseWriter, r *http.Request) {
 
-	body, err := ioutil.ReadAll(r.Body)
-	helpers.HandleErr(err)
+	body := readBody(r)
 
 	var formattedBody Login
-	err = json.Unmarshal(body, &formattedBody)
+
+	err := json.Unmarshal(body, &formattedBody)
 	helpers.HandleErr(err)
 
 	login := users.Login(formattedBody.Username, formattedBody.Password)
 
 	fmt.Println(formattedBody.Password)
 
-	if login["message"] == "all is ok" {
-		resp := login
-		json.NewEncoder(w).Encode(resp)
-	} else {
-		resp := ErrResponse{Message: "Wrong username or password"}
-		json.NewEncoder(w).Encode(resp)
-	}
+	apiResponse(login, w)
 }
 
 func register(w http.ResponseWriter, r *http.Request) {
 
-	body, err := ioutil.ReadAll(r.Body)
-	helpers.HandleErr(err)
+	body := readBody(r)
 
 	var formattedBody Register
-	err = json.Unmarshal(body, &formattedBody)
+	err := json.Unmarshal(body, &formattedBody)
 	helpers.HandleErr(err)
 
 	register := users.Register(formattedBody.Username, formattedBody.Email, formattedBody.Password)
 
 	fmt.Println(formattedBody.Email)
 
-	if register["message"] == "all is ok" {
-		resp := register
-		json.NewEncoder(w).Encode(resp)
-	} else {
-		resp := ErrResponse{Message: "Something went wrong"}
-		json.NewEncoder(w).Encode(resp)
-	}
+	apiResponse(register, w)
 }
 
 func StartApi() {
 	router := mux.NewRouter()
+	router.Use(helpers.PanicHandler)
 	router.HandleFunc("/login", login).Methods("POST")
 	router.HandleFunc("/create-account", register).Methods("POST")
 	fmt.Println("App is running on port :3000")
